@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quiz</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <nav class="navbar navbar-light bg-light">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="#">
+                <img src="https://shorturl.at/lBZ68" alt="" width="20%" class="d-inline-block ">
+                <h3 class="text-center justify-content-center" style="display: inline;">Hi, @User123</h3>
+            </a>
+        </div>
+    </nav>
+    <div class="questionContainer">
+        <div class="questionDiv"></div>
+        <input type="radio" name="option" id="option1" value="1">
+        <label for="option1">
+            <div class="opt"></div>
+        </label><br>
+        <input type="radio" name="option" id="option2" value="2">
+        <label for="option2">
+            <div class="opt"></div>
+        </label><br>
+        <input type="radio" name="option" id="option3" value="3">
+        <label for="option3">
+            <div class="opt"></div>
+        </label><br>
+        <input type="radio" name="option" id="option4" value="4">
+        <label for="option4">
+            <div class="opt"></div>
+        </label><br>
+
+        <button id="submit" class="btn btn-success">Submit</button>
+        <button type="reset" class="btn btn-danger">Clear</button>
+    </div>
+
+    <script>
+        let marks = 0;
+        let index = 0;
+
+        const submitButton = document.querySelector('#submit');
+
+        async function fetchQuestion() {
+            try {
+                const response = await fetch('/quiz');
+                const user = await response.json();
+                const data = parse(user);
+                return data.questions[index];
+            } catch (error) {
+                console.error('Error fetching question:', error);
+            }
+        }
+
+        async function displayQuestion() {
+            const question = await fetchQuestion();
+            const questionDiv = document.querySelector('.ques');
+            const optionsDivs = document.querySelectorAll('.opt');
+
+            questionDiv.textContent = question.ques;
+            for (let i = 0; i < 4; i++) {
+                optionsDivs[i].textContent = question.options[i];
+            }
+        }
+
+        submitButton.addEventListener('click', async () => {
+            const selectedAnswer = document.querySelector('input[name="option"]:checked');
+            if (!selectedAnswer) {
+                alert('Please select an option');
+                return;
+            }
+            const selectedValue = selectedAnswer.value;
+
+            const currentQuestion = await fetchQuestion();
+            if (selectedValue === currentQuestion.ans) {
+                marks++;
+            }
+
+            index++;
+            if (index < 10) {
+                displayQuestion();
+            } else {
+                const container = document.querySelector('.questionContainer');
+                container.innerHTML = `You scored ${marks} out of 10`;
+            }
+        });
+
+        displayQuestion();
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM"
+        crossorigin="anonymous"></script>
+    <script src="script.js"></script>
+</body>
+</html>
