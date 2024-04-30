@@ -1,101 +1,137 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Quiz</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
-        integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Quiz</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
+    integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous" />
 
-    <link rel="stylesheet" href="style.css">
+  <style>
+    body {
+      background: hsla(217, 100%, 50%, 1);
+
+      background: linear-gradient(90deg, hsla(217, 100%, 50%, 1) 0%, hsla(186, 100%, 69%, 1) 100%);
+
+      background: -moz-linear-gradient(90deg, hsla(217, 100%, 50%, 1) 0%, hsla(186, 100%, 69%, 1) 100%);
+
+      background: -webkit-linear-gradient(90deg, hsla(217, 100%, 50%, 1) 0%, hsla(186, 100%, 69%, 1) 100%);
+
+      filter: progid: DXImageTransform.Microsoft.gradient(startColorstr="#0061FF", endColorstr="#60EFFF", GradientType=1);
+    }
+
+    h3 {
+      color: violet;
+      font-weight: 900;
+    }
+
+    .questionContainer {
+      background-color: #fff;
+      border-radius: 1em;
+      border-radius: 2px 4px 4px 2px rgba(0, 0, 0, 0.6);
+      margin: 5vh auto 2vh auto;
+      width: 80%;
+      padding: 20px;
+    }
+
+    .container {
+      width: 80%;
+    }
+
+    .img-wrapper {
+      width: 100px;
+      height: inherit;
+    }
+
+    img {
+      height: 100%;
+      width: 100%;
+    }
+  </style>
 </head>
 <body>
-    <nav class="navbar navbar-light bg-light">
-        <div class="container-fluid">
-            <a class="navbar-brand" href="#">
-                <img src="https://shorturl.at/lBZ68" alt="" width="20%" class="d-inline-block ">
-                <h3 class="text-center justify-content-center" style="display: inline;">Hi, @User123</h3>
-            </a>
-        </div>
-    </nav>
-    <div class="questionContainer">
-        <div class="questionDiv"></div>
-        <input type="radio" name="option" id="option1" value="1">
-        <label for="option1">
-            <div class="opt"></div>
-        </label><br>
-        <input type="radio" name="option" id="option2" value="2">
-        <label for="option2">
-            <div class="opt"></div>
-        </label><br>
-        <input type="radio" name="option" id="option3" value="3">
-        <label for="option3">
-            <div class="opt"></div>
-        </label><br>
-        <input type="radio" name="option" id="option4" value="4">
-        <label for="option4">
-            <div class="opt"></div>
-        </label><br>
-
-        <button id="submit" class="btn btn-success">Submit</button>
-        <button type="reset" class="btn btn-danger">Clear</button>
+  <div class="container p-3 bg-light mt-5">
+    <div class="navigation d-flex justify-content-between align-items-center">
+      <div class="img-wrapper">
+        <img
+          src="https://media.istockphoto.com/id/1464511713/vector/quiz-logo-isolated-on-white-background.jpg?s=612x612&w=0&k=20&c=VuTteQpXb_5I8jsJ5xCalHk1iPQMX9WsSf_y-qH7kIQ="
+          alt="logo">
+      </div>
+      <h5 class="pe-4">
+        <%=User%>
+      </h5>
     </div>
+  </div>
+  <div class="questionContainer ps-5">
+    <form action="/home/<%= sub %>/:<%=User%>" method="post">
+      <% for(let i=0; i<10; i++ ) { %>
+        <br />
+        <div class="questionDiv">
+          <%= i+1 %>.&nbsp;&nbsp;<%= all[ i ].ques %>
+        </div>
+        <input type="radio" name="option<%= i %>" id="option1<%= i %>" value="1" />
+        <label for="option1<%= i %>">
+          <div class="opt1">
+            <%= all[i ].options[0] %>
+          </div>
+        </label><br />
+        <input type="radio" name="option<%= i %>" id="option2<%= i %>" value="2" />
+        <label for="option2<%= i %>">
+          <div class="opt2">
+            <%= all[ i ].options[1] %>
+          </div>
+        </label><br />
+        <input type="radio" name="option<%= i %>" id="option3<%= i %>" value="3" />
+        <label for="option3<%= i %>">
+          <div class="opt3">
+            <%= all[ i ].options[2] %>
+          </div>
+        </label><br />
+        <input type="radio" name="option<%= i %>" id="option4<%= i %>" value="4" />
+        <label for="option4<%= i %>">
+          <div class="opt4">
+            <%= all[i ].options[3] %>
+          </div>
+        </label><br />
+        <% } %>
+          <br /><br />
+          <button id="submit" class="btn btn-success">Submit</button>
+    </form>
+  </div>
 
-    <script>
-        let marks = 0;
-        let index = 0;
+  <script>
+    document.getElementById("submit").addEventListener("click", function () {
+      let correctAnswers = [];
+              <% for (let i = 0; i < all.length; i++) { %>
+        correctAnswers.push(<%= all[i].ans %>); // Push each correct answer from 'all' array
+              <% } %>
 
-        const submitButton = document.querySelector('#submit');
+        let selectedOptions = [];
 
-        async function fetchQuestion() {
-            try {
-                const response = await fetch('/quiz');
-                const user = await response.json();
-                const data = parse(user);
-                return data.questions[index];
-            } catch (error) {
-                console.error('Error fetching question:', error);
-            }
+      for (let i = 0; i < 10; i++) {
+        let options = document.getElementsByName("option" + i);
+        let selectedOption = Array.from(options).find(
+          (option) => option.checked
+        );
+
+        if (selectedOption) {
+          selectedOptions.push(parseInt(selectedOption.value));
+        } else {
+          selectedOptions.push(null); // If no option is selected, push null
         }
+      }
 
-        async function displayQuestion() {
-            const question = await fetchQuestion();
-            const questionDiv = document.querySelector('.ques');
-            const optionsDivs = document.querySelectorAll('.opt');
-
-            questionDiv.textContent = question.ques;
-            for (let i = 0; i < 4; i++) {
-                optionsDivs[i].textContent = question.options[i];
-            }
+      let score = 0;
+      for (let i = 0; i < 10; i++) {
+        if (selectedOptions[i] === correctAnswers[i]) {
+          score++;
         }
+      }
 
-        submitButton.addEventListener('click', async () => {
-            const selectedAnswer = document.querySelector('input[name="option"]:checked');
-            if (!selectedAnswer) {
-                alert('Please select an option');
-                return;
-            }
-            const selectedValue = selectedAnswer.value;
+      alert("Your score: " + score + "/10");
 
-            const currentQuestion = await fetchQuestion();
-            if (selectedValue === currentQuestion.ans) {
-                marks++;
-            }
+    });
 
-            index++;
-            if (index < 10) {
-                displayQuestion();
-            } else {
-                const container = document.querySelector('.questionContainer');
-                container.innerHTML = `You scored ${marks} out of 10`;
-            }
-        });
-
-        displayQuestion();
-    </script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
-        integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM"
-        crossorigin="anonymous"></script>
-    <script src="script.js"></script>
+  </script>
 </body>
 </html>
